@@ -1,14 +1,25 @@
 import { Letter } from "../Letter";
 import { StyledWord } from "./styles";
 
-function Word(props) {
-  const { word } = props;
+function getLetterStatus(letter, game) {
+  if (game.goodGuesses.includes(letter)) {
+    return "success";
+  }
+  return "default";
+}
 
-  const letters = word.split("");
+function Word(props) {
+  const { game } = props;
+
+  const letters = game.word.split("");
   return (
     <StyledWord>
       {letters.map((letter, index) => (
-        <Letter key={index + letter} letter={letter} />
+        <Letter
+          key={index + letter}
+          letter={letter}
+          status={getLetterStatus(letter, game)}
+        />
       ))}
     </StyledWord>
   );

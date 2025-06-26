@@ -30,12 +30,30 @@ const letters = [
   "Z",
 ];
 
+function getLetterStatus(letter, game) {
+  if (game.goodGuesses.includes(letter)) {
+    return "success";
+  }
+
+  if (game.badGuesses.includes(letter)) {
+    return "error";
+  }
+
+  return "default";
+}
+
 function Keyboard(props) {
-  const { onClick } = props;
+  const { onClick, game } = props;
+
   return (
     <StyledKeyboard>
       {letters.map((letter) => (
-        <Key key={letter} letter={letter} status="default" onClick={onClick} />
+        <Key
+          key={letter}
+          letter={letter}
+          status={getLetterStatus(letter, game)}
+          onClick={onClick}
+        />
       ))}
     </StyledKeyboard>
   );

@@ -1,18 +1,37 @@
+import { useState } from "react";
 import { Keyboard } from "./components/Keyboard";
 import { Word } from "./components/Word";
 
 import { StyledApp } from "./styles";
 
 function App() {
-  const word = "ahorcado";
+  const [game, setGame] = useState({
+    word: "AHORCADO",
+    goodGuesses: [],
+    badGuesses: [],
+  });
+
   function handleClick(event) {
-    console.log(word.toUpperCase().includes(event.target.value));
+    const letter = event.target.value;
+    if (game.word.includes(letter)) {
+      if (!game.goodGuesses.includes(letter)) {
+        const copy = [...game.goodGuesses];
+        copy.push(letter);
+        setGame({ ...game, goodGuesses: copy });
+      }
+    } else {
+      if (!game.badGuesses.includes(letter)) {
+        const copy = [...game.badGuesses];
+        copy.push(letter);
+        setGame({ ...game, badGuesses: copy });
+      }
+    }
   }
 
   return (
     <StyledApp>
-      <Word word={word} />
-      <Keyboard onClick={handleClick} />
+      <Word game={game} />
+      <Keyboard onClick={handleClick} game={game} />
     </StyledApp>
   );
 }
