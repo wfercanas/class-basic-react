@@ -1,4 +1,5 @@
 import { Keyboard } from "./components/Keyboard";
+import { Word } from "./components/Word";
 
 import { StyledApp } from "./styles";
 
@@ -10,7 +11,8 @@ function App() {
 
   return (
     <StyledApp>
-      <Keyboard onClick={handleClick} />;
+      <Word word={word} />
+      <Keyboard onClick={handleClick} />
     </StyledApp>
   );
 }
