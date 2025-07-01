@@ -19,21 +19,34 @@ function App() {
     goodGuesses: [],
     badGuesses: [],
     loading: true,
+    lifes: 10,
   });
 
   function handleClick(event) {
     const letter = event.target.value;
     if (game.word.includes(letter)) {
       if (!game.goodGuesses.includes(letter)) {
-        const copy = [...game.goodGuesses];
-        copy.push(letter);
-        setGame({ ...game, goodGuesses: copy });
+        const newGoodGuesses = [...game.goodGuesses];
+        newGoodGuesses.push(letter);
+        setGame({ ...game, goodGuesses: newGoodGuesses });
+      } else {
+        const newLifes = game.lifes - 1;
+        if (newLifes === 0) {
+          alert("Game over!");
+          return;
+        }
+        setGame({ ...game, lifes: newLifes });
       }
     } else {
       if (!game.badGuesses.includes(letter)) {
-        const copy = [...game.badGuesses];
-        copy.push(letter);
-        setGame({ ...game, badGuesses: copy });
+        const newBadGuesses = [...game.badGuesses];
+        newBadGuesses.push(letter);
+        const newLifes = game.lifes - 1;
+        if (newLifes === 0) {
+          alert("Game over!");
+          return;
+        }
+        setGame({ ...game, badGuesses: newBadGuesses, lifes: newLifes });
       }
     }
   }
@@ -50,6 +63,7 @@ function App() {
 
   return (
     <StyledApp>
+      <p>Lifes remaining: {game.lifes}</p>
       <Word game={game} />
       <Keyboard onClick={handleClick} game={game} />
     </StyledApp>
