@@ -15,7 +15,7 @@ async function getRandomWord() {
 
 function App() {
   const [game, setGame] = useState({
-    word: "AHORCADO",
+    word: undefined,
     goodGuesses: [],
     badGuesses: [],
     loading: true,
@@ -45,7 +45,7 @@ function App() {
   }, []);
 
   if (game.loading) {
-    return <div>loading...</div>;
+    return <div>loading....</div>;
   }
 
   return (
