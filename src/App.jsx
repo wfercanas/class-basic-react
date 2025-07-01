@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Keyboard } from "./components/Keyboard";
 import { Word } from "./components/Word";
 
@@ -13,8 +13,34 @@ async function getRandomWord() {
   return word;
 }
 
+function gameReducer(game, action) {
+  const { type, payload } = action;
+  if (type === "loaded_word") {
+    return { ...game, word: payload.word };
+  }
+  if (type === "loaded_game") {
+    return { ...game, loading: false };
+  }
+  if (type === "good_guess") {
+    if (!game.goodGuesses.includes(payload.letter)) {
+      const newGoodGuesses = [...game.goodGuesses];
+      newGoodGuesses.push(payload.letter);
+      return { ...game, goodGuesses: newGoodGuesses };
+    } else {
+      return { ...game, lifes: game.lifes - 1 };
+    }
+  }
+  if (type === "bad_guess") {
+    if (!game.badGuesses.includes(payload.letter)) {
+      const newBadGuesses = [...game.badGuesses];
+      newBadGuesses.push(payload.letter);
+      return { ...game, badGuesses: newBadGuesses, lifes: game.lifes - 1 };
+    }
+  }
+}
+
 function App() {
-  const [game, setGame] = useState({
+  const [game, dispatch] = useReducer(gameReducer, {
     word: undefined,
     goodGuesses: [],
     badGuesses: [],
@@ -25,35 +51,33 @@ function App() {
   function handleClick(event) {
     const letter = event.target.value;
     if (game.word.includes(letter)) {
-      if (!game.goodGuesses.includes(letter)) {
-        const newGoodGuesses = [...game.goodGuesses];
-        newGoodGuesses.push(letter);
-        setGame({ ...game, goodGuesses: newGoodGuesses });
-      } else {
-        const newLifes = game.lifes - 1;
-        if (newLifes === 0) {
-          alert("Game over!");
-          return;
-        }
-        setGame({ ...game, lifes: newLifes });
-      }
+      dispatch({
+        type: "good_guess",
+        payload: {
+          letter: letter,
+        },
+      });
     } else {
-      if (!game.badGuesses.includes(letter)) {
-        const newBadGuesses = [...game.badGuesses];
-        newBadGuesses.push(letter);
-        const newLifes = game.lifes - 1;
-        if (newLifes === 0) {
-          alert("Game over!");
-          return;
-        }
-        setGame({ ...game, badGuesses: newBadGuesses, lifes: newLifes });
-      }
+      dispatch({
+        type: "bad_guess",
+        payload: {
+          letter: letter,
+        },
+      });
     }
   }
 
   useEffect(() => {
     getRandomWord().then((word) => {
-      setGame({ ...game, word: word.toUpperCase(), loading: false });
+      dispatch({
+        type: "loaded_word",
+        payload: {
+          word: word.toUpperCase(),
+        },
+      });
+      dispatch({
+        type: "loaded_game",
+      });
     });
   }, []);
 
